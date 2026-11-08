@@ -1,13 +1,15 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 
 app = Flask(__name__)
 #onde fica o BD?
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ecommerce.db'
 
 db = SQLAlchemy(app)
-
+CORS(app)
 # Modelagem
+
 # Produto (id, name, price, descruption)
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -65,9 +67,23 @@ def update_product(product_id):
             
     if 'name' in data:
             product.description = data['price']
-
+      
+    db.session.commit()
     return jsonify({"message": "Product updated successfully"}), 404
 
+@app.route('/api/products', methods=['GET'])
+def get_products():
+    products = Product.query.all()
+    product_list = []
+    for product in products:
+      poduct_data  {
+            "id": product.id,
+            "name": product.name,
+            "price": product.price,
+            "description": product.description
+      }
+      product_list.append(produt_data)
+    return jsonify(product_list)
 
 
 # Rotas // Definir rota raiz (pagina inicial) e sua função
